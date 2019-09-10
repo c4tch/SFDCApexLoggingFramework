@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LimitWarning__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>A platform limit was detected to have been reached or is within certain parameters</description>
+    <externalId>false</externalId>
+    <isFilteringDisabled>false</isFilteringDisabled>
+    <isNameField>false</isNameField>
+    <isSortingDisabled>false</isSortingDisabled>
+    <label>Limit Warning</label>
+    <type>Checkbox</type>
+</CustomField>

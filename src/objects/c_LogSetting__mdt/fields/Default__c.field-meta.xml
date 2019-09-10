@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Default__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Important! At least one entry should be default.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Important! At least one entry should be default.</inlineHelpText>
+    <label>Default</label>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Important__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If the event is worth noting, it may be flagged as &quot;important&quot;</description>
+    <externalId>false</externalId>
+    <isFilteringDisabled>false</isFilteringDisabled>
+    <isNameField>false</isNameField>
+    <isSortingDisabled>false</isSortingDisabled>
+    <label>Important</label>
+    <type>Checkbox</type>
+</CustomField>

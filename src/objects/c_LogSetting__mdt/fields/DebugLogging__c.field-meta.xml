@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DebugLogging__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Create a debug log entry for every log entry</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Create a debug log entry for every log entry</inlineHelpText>
+    <label>Debug Logging</label>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>View_All</fullName>
+    <columns>Active__c</columns>
+    <columns>Default__c</columns>
+    <columns>MasterLabel</columns>
+    <columns>Profile_ID__c</columns>
+    <columns>UserName__c</columns>
+    <columns>DebugLogging__c</columns>
+    <columns>DebugPrefix__c</columns>
+    <columns>MonitorLimits__c</columns>
+    <columns>limitWarningThreshold__c</columns>
+    <columns>Categories__c</columns>
+    <columns>Important__c</columns>
+    <columns>Created__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>View All</label>
+</ListView>

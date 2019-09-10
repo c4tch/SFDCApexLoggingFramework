@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DebugPrefix__c</fullName>
+    <defaultValue>&quot;@@&quot;</defaultValue>
+    <description>Text to proceed a debug entry</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Text to proceed a debug entry</inlineHelpText>
+    <label>Debug Prefix</label>
+    <length>5</length>
+    <required>true</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

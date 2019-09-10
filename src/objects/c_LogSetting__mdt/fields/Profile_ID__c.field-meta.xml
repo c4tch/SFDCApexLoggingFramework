@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Profile_ID__c</fullName>
+    <description>OPTIONAL Use the ID of the a given profile to have specific log settings for them</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>OPTIONAL Use the ID of the a given profile to have specific log settings for them</inlineHelpText>
+    <label>Profile ID</label>
+    <length>18</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
