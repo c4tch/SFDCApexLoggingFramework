@@ -7,7 +7,7 @@ Behaviours for logs can be configured at the Profile, User or Default level, all
 Common uses:
 - fix debug statements in places you wish to check code flow through the whole application 
 - generate platform events that are listened to by Process Builder so that when...
-  - your solution encounters an event or error and should chatter the sys admin, business architect or other developers attention
+  - your solution encounters an event or error and should chatter the sys admin, business architect or other developers attentionhttps://github.com/c4tch/ApexLoggingFramework.git
   - an event occurrs that you want to commit to a permanent log object for reporting
 
 System.Debug may still be used when developing but should be removed and replaced with c_Log or (ideally) removed entirely after passing QA as these inflate debug logs and slow down performance!
