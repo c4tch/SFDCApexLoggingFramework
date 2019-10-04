@@ -33,7 +33,7 @@ If you wish to clear the log stack call c_Log.reset(); or c_log.flush() to get t
 
 Debug log using the logging framework with limits set as BASICS (Cpu and DML):
 
-<<image>>
+![alt text](README_Files/sample_log.png)
 
 A platform event sent to c_Log__e will be generated.
 
