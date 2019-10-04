@@ -21,7 +21,7 @@ Custom metadata define how we log with a *default* setting or by *username* / *p
  - Create Debug statements (default false) with a defined Debug prefix (default @@)
  - Choose which limit to monitor and set a Limit warning threshold (default 75%)
 
-<<image>>
+![alt text](README_Files/log_settings.png)
 
 By default, the debug logging should be off, and only important events or ERRORS or ALERTS should be sent a platform events.
 
