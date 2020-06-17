@@ -11,3 +11,4 @@ test/artifacts
 .vscode
 server.key
 debug.log
+.sfdx/tools/apex.db
