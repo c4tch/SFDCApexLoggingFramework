@@ -69,6 +69,9 @@ private class c_Log_Test extends c_TestFactory {
     @IsTest
     static void test_pushEvents() {
         // No matter the settings these should fire gracefully. Running this should provide debug logs etc. according to the options. No way to test platform events in memory, so we have to be happy with coverage :()
+        
+        c_log.send('Test Message');
+        
         c_Log.push('Test Message');
         c_Log.push(c_Log.category.OTHER, 'Test Important Categorised Message', true);
         c_Log.push(c_Log.category.DATABASE, 'A database error', 'my soql string', true);
@@ -77,5 +80,6 @@ private class c_Log_Test extends c_TestFactory {
 
         c_Log.push('Test Message');
         c_log.flush();
+
     }
 }
