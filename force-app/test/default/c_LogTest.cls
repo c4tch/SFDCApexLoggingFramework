@@ -1,5 +1,5 @@
 /**
- @Name: c_Log_Test.cls
+ @Name: c_LogTest.cls
  @Tests: c_Log.cls
  @Description: Tests Logging Framework. Cannot test publishing of platform event!
  @History
@@ -8,7 +8,7 @@
 */
 
 @IsTest
-private class c_Log_Test extends c_TestFactory {
+private class c_LogTest extends c_TestFactory {
 
     /**
     * Ensure custom metadata has a default value
@@ -41,25 +41,21 @@ private class c_Log_Test extends c_TestFactory {
     */
     @IsTest
     static void test_userCanDefineSettings() {
-        setDefaultContext();
-
-        User admin = (User) make(Entity.ADMIN_USER, new User(alias='theAdmin'));
-        run();
-
         // In memory only test for settings
-        c_LogSetting__mdt matchingOptionUser = new c_LogSetting__mdt(DeveloperName= 'TestUser', UserName__c = admin.UserName);
-        c_LogSetting__mdt matchingOptionProfile = new c_LogSetting__mdt(DeveloperName= 'TestProfile', Profile_ID__c = admin.ProfileId);
+        c_LogSetting__mdt matchingOptionUser = new c_LogSetting__mdt(DeveloperName= 'TestUser', UserName__c = UserInfo.getUserName());
+        c_LogSetting__mdt matchingOptionProfile = new c_LogSetting__mdt(DeveloperName= 'TestProfile', Profile_ID__c = UserInfo.getProfileId());
         c_LogSetting__mdt matchingOptionDefault = new c_LogSetting__mdt(DeveloperName= 'TestDefault', Default__c = TRUE);
 
         c_LogSetting__mdt options;
-        options = c_Log.compareOptions(new List<c_LogSetting__mdt>{matchingOptionUser}, admin.UserName, admin.ProfileId);
+        options = c_Log.compareOptions(new List<c_LogSetting__mdt>{matchingOptionUser}, UserInfo.getUserName(), UserInfo.getProfileId());
         System.Assert(options!=null,'Logging method did not find logging options based on User Name. Logical fault in c_Log.matchOptions.');
 
-        options = c_Log.compareOptions(new List<c_LogSetting__mdt>{matchingOptionProfile}, admin.UserName, admin.ProfileId);
+        options = c_Log.compareOptions(new List<c_LogSetting__mdt>{matchingOptionProfile}, UserInfo.getUserName(), UserInfo.getProfileId());
         System.Assert(options!=null,'Logging method did not find logging options based on ProfileId. Logical fault in c_Log.matchOptions.');
 
-        options = c_Log.compareOptions(new List<c_LogSetting__mdt>{matchingOptionDefault}, admin.UserName, admin.ProfileId);
+        options = c_Log.compareOptions(new List<c_LogSetting__mdt>{matchingOptionDefault}, UserInfo.getUserName(), UserInfo.getProfileId());
         System.Assert(options!=null,'Logging method did not find logging options based on Default. Logical fault in c_Log.matchOptions.');
+        
     }
 
 

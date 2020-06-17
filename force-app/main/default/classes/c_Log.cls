@@ -374,17 +374,21 @@ public without sharing class c_Log {
             // System.debug('@@ options '+options);
         }
     }
-    public static void compareOptions(c_LogSetting__mdt[] matchingOptions, String username, Id profileId) {
+    public static c_LogSetting__mdt compareOptions(c_LogSetting__mdt[] matchingOptions, String username, Id profileId) {
         // Match options on user, profile and default. Set the value so this dml will not run again.
         for (c_LogSetting__mdt ls : matchingOptions) {
             if (ls.UserName__c!=null && ls.UserName__c == username) {
                 options = ls;
+                return options;
             } else if (ls.Profile_ID__c!=null && ls.Profile_ID__c == profileId) {
                 options = ls;
+                return options;
             } else if (ls.Default__c!=null && ls.Default__c) {
                 options = ls;
+                return options;
             }
         }
+        return options;
     }
 
     public static String getDebugPrefix() {
