@@ -39,6 +39,7 @@ public without sharing class c_Log {
     // Logging options from custom metadata
     public static final String DEBUG_PREFIX = getDebugPrefix();
     public static final Boolean DEBUG_LOGGING = getDebugLogging();
+    public static final Boolean EVENTLOGGING = getEventLogging();
     public static final Set<category> EVENT_CATEGORIES = getListOfCategoriesForPlatformEvents(); // Should include an ALL or * wildcard in the setting field to include the whole ENUM list
     public static final Boolean SEND_ALL_IMPORTANT_EVENTS = getFlagToSendAllImportantEntriesAsEvents();
     public static final Set<c_Log.monitorLimit> MONITOR_LIMITS = getMonitorLimits();
@@ -126,7 +127,7 @@ public without sharing class c_Log {
     public static void emit()
     {   
         // Emit the log data via Platform Events and clear
-        if (!log.isEmpty()) {
+        if (!log.isEmpty() && EVENTLOGGING) {
             EventBus.publish(
             new c_Log__e(
                 Title__c = (PE_Important ? 'IMPORTANT ' : '') +String.join((Iterable<String>)PE_categories,','),
@@ -176,6 +177,7 @@ public without sharing class c_Log {
         string getLimitReport() {
             String strLimits = '';
             
+            // System.debug('@@ c_Log.MONITOR_LIMITS '+c_Log.MONITOR_LIMITS+' c_Log.MONITOR_LIMITS.isEmpty() '+c_Log.MONITOR_LIMITS.isEmpty());
             if (!c_Log.MONITOR_LIMITS.isEmpty())
             {
                 if (c_Log.MONITOR_LIMITS.contains(c_Log.monitorLimit.BASICS)) {
@@ -329,29 +331,25 @@ public without sharing class c_Log {
 
             String username = UserInfo.getUserName();
             Id profileId = UserInfo.getProfileId();
-
+            
             c_LogSetting__mdt[] matchingOptions = new List<c_LogSetting__mdt>();
 
             c_LogSetting__mdt[] matchingOptionProfile = [SELECT 
                 Default__c,  UserName__c, Profile_ID__c,
                 DebugLogging__c, DebugPrefix__c, 
-                Categories__c, 
-                Important__c,
-                limitWarningThreshold__c, 
-                MonitorLimits__c
+                EventLogging__c, Categories__c, Important__c,
+                limitWarningThreshold__c, MonitorLimits__c
                 FROM c_LogSetting__mdt 
-                WHERE Profile_ID__c = :profileId
-                AND Active__c = TRUE  
+                WHERE 
+                Active__c = TRUE AND
+                Profile_ID__c = :profileId
                 Order By Created__c DESC];
-            matchingOptions.addAll(matchingOptionProfile);
-
+            
             c_LogSetting__mdt[] matchingOptionUser = [SELECT 
                 Default__c,  UserName__c, Profile_ID__c,
                 DebugLogging__c, DebugPrefix__c, 
-                Categories__c, 
-                Important__c,
-                limitWarningThreshold__c, 
-                MonitorLimits__c
+                EventLogging__c, Categories__c, Important__c,
+                limitWarningThreshold__c, MonitorLimits__c
                 FROM c_LogSetting__mdt 
                 WHERE UserName__c = :username
                 AND Active__c = TRUE  
@@ -361,34 +359,32 @@ public without sharing class c_Log {
             c_LogSetting__mdt[] matchingOptionDefault = [SELECT 
                 Default__c,  UserName__c, Profile_ID__c,
                 DebugLogging__c, DebugPrefix__c, 
-                Categories__c, 
-                Important__c,
-                limitWarningThreshold__c, 
-                MonitorLimits__c
+                EventLogging__c, Categories__c, Important__c,
+                limitWarningThreshold__c, MonitorLimits__c
                 FROM c_LogSetting__mdt 
                 WHERE Default__c = TRUE
                 AND Active__c = TRUE  
                 Order By Created__c DESC];
-            matchingOptions.addAll(matchingOptionDefault);
 
+            matchingOptions.addAll(matchingOptionProfile);
+            matchingOptions.addAll(matchingOptionUser);
+            matchingOptions.addAll(matchingOptionDefault);
+            
             compareOptions(matchingOptions,username,profileId);
+            // System.debug('@@ options '+options);
         }
     }
-    public static c_LogSetting__mdt compareOptions(c_LogSetting__mdt[] matchingOptions, String username, Id profileId) {
+    public static void compareOptions(c_LogSetting__mdt[] matchingOptions, String username, Id profileId) {
         // Match options on user, profile and default. Set the value so this dml will not run again.
         for (c_LogSetting__mdt ls : matchingOptions) {
             if (ls.UserName__c!=null && ls.UserName__c == username) {
                 options = ls;
-                return options;
             } else if (ls.Profile_ID__c!=null && ls.Profile_ID__c == profileId) {
                 options = ls;
-                return options;
             } else if (ls.Default__c!=null && ls.Default__c) {
                 options = ls;
-                return options;
             }
         }
-        return null;
     }
 
     public static String getDebugPrefix() {
@@ -399,6 +395,11 @@ public without sharing class c_Log {
     public static Boolean getDebugLogging() {
         findOptions();
         if (options!=null && options.DebugPrefix__c!=null) return options.DebugLogging__c;
+        return TRUE;
+    }
+    public static Boolean getEventLogging() {
+        findOptions();
+        if (options!=null) return options.EventLogging__c;
         return TRUE;
     }
     public static Set<c_Log.category> getListOfCategoriesForPlatformEvents() {
@@ -422,6 +423,8 @@ public without sharing class c_Log {
             }
 
             return categorySet;
+        } else if (options!=null && options.Categories__c==null) {
+            return new Set<c_Log.category>();
         }
         return new Set<c_Log.category>{c_Log.category.EVENT, c_Log.category.INTEGRATION, c_Log.category.DATABASE, c_Log.category.ALERT, c_Log.category.ERROR, c_Log.category.PROCESS, c_Log.category.OTHER};
     }
@@ -449,6 +452,8 @@ public without sharing class c_Log {
                 }
             }
             return monitorSet;
+        } else if (options!=null && options.MonitorLimits__c==null) {
+            return new Set<c_Log.monitorLimit>();
         }
         return new Set<c_Log.monitorLimit>{c_Log.monitorLimit.BASICS};
     }

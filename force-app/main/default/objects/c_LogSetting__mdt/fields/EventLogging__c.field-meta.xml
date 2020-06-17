@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EventLogging__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>When set, any event that has a cateogry matching those in "Categories", or marked as "Important" will fire a platform event</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>When set, any event that has a cateogry matching those in "Categories", or marked as "Important" will fire a platform event</inlineHelpText>
+    <label>Event Logging</label>
+    <type>Checkbox</type>
+</CustomField>

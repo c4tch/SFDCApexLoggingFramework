@@ -73,6 +73,10 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>EventLogging__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>Categories__c</field>
             </layoutItems>
             <layoutItems>
