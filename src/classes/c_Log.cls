@@ -1,22 +1,30 @@
 /**
  @Name: c_Log.cls
  @TestedBy: c_Log_Test.cls
- @Description: Logging framework writes out debug logs, monitors limits and publishes log entries as Platform Eventds and debug statements. Options are driven by Custom MetaData c_LogSetting__mtd. 
+ @Description: 
+  Logging framework writes out debug logs, monitors limits and publishes log entries as Platform Eventds and debug statements. 
+  Purpose: To allow critical events to be logged as an Event, especially when key processes fail or limits are being reached.
+  Options are driven by Custom MetaData c_LogSetting__mtd. 
   Custom settings define how we log with a default setting or by username / profileid
   - Generate platform events when a log entry of speciffic cateogory is added, or when important (default false)
   - Create Debug statements (default false) with a defined Debug prefix (default @@)
   - Choose which limit to monitor and set a Limit warning threshold (default 75%)
 
- @Usage c_log.push([logCategory], logMessage, [important])); // Push a log entry to the stack
+ @Usage 
+    c_log.send([logCategory], logMessage, [important])); // Send a single log event
+    c_log.push([logCategory], logMessage, [important])); // Push a log entry to the stack
     c_log.emit(); // To have the current set of logs published.ApexPages
-    c_log.flush(); // Returns events as JSON and clears the current log
+    c_log.flush(); // Returns log as JSON and clears the current log (called by emit() automatically)
     To react to events, (ex. email an admin or store the event), have a Process Builder workflow subscribed to the event, that will email / react to the issue.
  
- @TODO: Slim down the CPU time on limit cheking, maybe dont use another object. Prevent user from deactivating or unchecking Default on a Setting marked as default when there is no other active default record
+ @TODO: 
+    Slim down the CPU time on limit cheking, maybe dont use another object. 
+    Prevent user from deactivating or unchecking Default on a Setting marked as default when there is no other active default record
 
  @History
   VERSION     AUTHOR           DATE            DETAIL
   1.0         Matt Evans       28/8/2019       Draft
+  1.1         Matt Evans       28/8/2019       CPU Review
 */
 
 public without sharing class c_Log {
@@ -44,10 +52,30 @@ public without sharing class c_Log {
 
 
     /**
-    * PUSH logs to the stack
+    * SEND the log event immediately (immediate logging)
+    */
+    public static void send(String logMessage)
+    {
+        push(category.EVENT, logMessage, '', false);
+        emit();
+    }
+    public static void send(String logMessage, Boolean important)
+    {
+        push(category.EVENT, logMessage, '', important);
+        emit();
+    }
+    public static void send(category logCategory, String logMessage, Boolean important)
+    {    
+        push(logCategory, logMessage, '', important);
+        emit();
+    }
+
+    /**
+    * PUSH logs to the stack (when multiple logs want to be collected)
     */
 
     // Generic log push; Logging options driven by custom settings
+    // If multiple logs are to be recorded, then use 'push' then 'emit'
     public static void push(String logMessage)
     {
         push(category.EVENT, logMessage, '', false);
@@ -64,11 +92,7 @@ public without sharing class c_Log {
     /**
     * Main push method
     */ 
-    public static void push(
-        category logCategory, 
-        String msg, 
-        String soql, 
-        Boolean important) {
+    public static void push(category logCategory, String msg, String soql, Boolean important) {
         
         LogEventData logData = new LogEventData(logCategory, msg, soql, important);
 
@@ -77,7 +101,7 @@ public without sharing class c_Log {
         if (SEND_ALL_IMPORTANT_EVENTS && important || EVENT_CATEGORIES.contains(logCategory)) {
             log.add(logData);
 
-            // build the title and properties that we will use in the platform event allong with the serialised log data
+            // build the title and properties that we will use in the platform event along with the serialised log data
             PE_categories.add(''+logCategory);
             PE_Important = logData.important ? true : PE_Important;
             PE_LimitWarning = logData.limitWarning ? true : PE_LimitWarning;
@@ -87,27 +111,13 @@ public without sharing class c_Log {
         if (DEBUG_LOGGING) {
             String strDebug;
             System.debug(important ? LoggingLevel.ERROR :  LoggingLevel.INFO, DEBUG_PREFIX + ' ' + (logCategory != null ? logCategory : c_Log.category.OTHER) + ' '+(important ? '/!\\ IMPORTANT /!\\' : '')+' @'+logData.timestamp+' ' + (msg!= null && msg!='' ? ' Msg: ' + msg  : ''));
-            if (soql!=null && soql!='') System.debug(important ? LoggingLevel.ERROR :  LoggingLevel.INFO, DEBUG_PREFIX + ' Soql: ' + soql);
-            if (logData.limitReport!=null && logData.limitReport!='') System.debug(important ? LoggingLevel.ERROR :  LoggingLevel.INFO, DEBUG_PREFIX + ' Limits: ' + logData.limitReport);
+            if (soql!=null && soql!='') {
+                System.debug(important ? LoggingLevel.ERROR :  LoggingLevel.INFO, DEBUG_PREFIX + ' Soql: ' + soql);
+            }
+            if (logData.limitReport!=null && logData.limitReport!='') {
+                System.debug(important ? LoggingLevel.ERROR :  LoggingLevel.INFO, DEBUG_PREFIX + ' Limits: ' + logData.limitReport);
+            }
         }
-    }
-
-    /**
-	 * Flush the log entries to JSON and clear log
-	 **/   
-    public static String flush()
-    {
-        String logData = System.JSON.serialize(log, true);
-        reset();
-		return logData;  
-    }
-
-    static void reset() {
-        log = new List<LogEventData>();
-        PE_categories = new Set<String>();
-        PE_Important = false;
-        PE_LimitWarning = false;
-        PE_title = '';
     }
 
     /**
@@ -125,6 +135,20 @@ public without sharing class c_Log {
                 LimitWarning__c = PE_LimitWarning,
                 Data__c = flush()));
         }
+    }
+
+    /**
+	 * Flush the log entries to JSON and clear log
+	 **/   
+    public static String flush()
+    {
+        String logData = System.JSON.serialize(log, true);
+        log = new List<LogEventData>();
+        PE_categories = new Set<String>();
+        PE_Important = false;
+        PE_LimitWarning = false;
+        PE_title = '';
+		return logData;  
     }
 
     /**
